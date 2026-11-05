@@ -22,7 +22,6 @@ https://denysmatsevych.github.io/web-development-2026/react/labs/lab-2/
 
 Заповніть за вкладкою **Components ⚛** у React DevTools (§4.6).
 
-
 ```mermaid
 graph TD
   App --> Header
