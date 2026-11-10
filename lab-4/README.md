@@ -35,6 +35,7 @@ flowchart TD
     App --> CafeInfo
     MenuTable -->|"category"| MenuCategory
     MenuCategory -->|"item"| MenuItemRow
-    
+
     SearchBar -.->|"onFilterTextChange, onInStockOnlyChange"| App
     App -.->|"menu.filterText, menu.inStockOnly"| LocalStorage[("localStorage")]
+```
