@@ -30,12 +30,16 @@ https://denysmatsevych.github.io/web-development-2026/react/labs/lab-4/
 
 ```mermaid
 flowchart TD
-    App -->|"filterText, inStockOnly"| SearchBar
-    App -->|"menu, filterText, inStockOnly"| MenuTable
-    App --> CafeInfo
-    MenuTable -->|"category"| MenuCategory
-    MenuCategory -->|"item"| MenuItemRow
+  App -->|"menu"| FilterableMenuTable
+  App --> CafeInfo
+  FilterableMenuTable -->|"filterText, inStockOnly"| SearchBar
+  FilterableMenuTable -->|"menu, filterText, inStockOnly"| MenuTable
+  MenuTable -->|"category"| MenuCategory
+  MenuCategory -->|"item"| MenuItemRow
 
-    SearchBar -.->|"onFilterTextChange, onInStockOnlyChange"| App
-    App -.->|"menu.filterText, menu.inStockOnly"| LocalStorage[("localStorage")]
+  SearchBar -.->|"onFilterTextChange, onInStockOnlyChange"| FilterableMenuTable
+  FilterableMenuTable -.->|"menu.filterText, menu.inStockOnly"| LocalStorage[("localStorage")]
 ```
+### Колокація стану
+* **До:** App, SearchBar, MenuTable, CafeInfo
+* **Після:** FilterableMenuTable, SearchBar, MenuTable
