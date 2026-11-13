@@ -1,5 +1,4 @@
 import { Controller, useForm, useWatch } from 'react-hook-form'
-import { useState } from 'react'
 import GuestsStepper from './GuestsStepper.jsx'
 import { startTransition, useActionState } from 'react'
 import { sendBooking } from '../api.js'
@@ -155,8 +154,10 @@ export default function BookingForm() {
         <button type="submit" aria-disabled={isPending}>
           {isPending ? 'Надсилаємо...' : 'Забронювати'}
         </button>
+        <button type="button" onClick={handleReset}>
+          Очистити
+        </button>
       </div>
-
       <p
         role="status"
         className={result?.ok === false ? 'status error' : 'status'}
