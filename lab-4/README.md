@@ -40,6 +40,8 @@ flowchart TD
   SearchBar -.->|"onFilterTextChange, onInStockOnlyChange"| FilterableMenuTable
   FilterableMenuTable -.->|"menu.filterText, menu.inStockOnly"| LocalStorage[("localStorage")]
 ```
+
 ### Колокація стану
-* **До:** App, SearchBar, MenuTable, CafeInfo
-* **Після:** FilterableMenuTable, SearchBar, MenuTable
+
+- **До:** App, SearchBar, MenuTable, CafeInfo
+- **Після:** FilterableMenuTable, SearchBar, MenuTable
