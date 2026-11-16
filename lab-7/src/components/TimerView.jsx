@@ -14,6 +14,58 @@
  *
  * Вимоги — у тестах tests/TimerView.test.jsx.
  */
-export default function TimerView() {
-  throw new Error('Not implemented: TimerView')
+import { formatTime } from '../formatTime.js'
+
+export default function TimerView({
+  method,
+  secondsLeft,
+  status,
+  onStart,
+  onPause,
+  onReset,
+}) {
+  return (
+    <article className="brew-timer" aria-labelledby={`${method.id}-title`}>
+      <h3 id={`${method.id}-title`}>{method.name}</h3>
+      <p>{method.recipe}</p>
+      <p className="time" role="timer">
+        {formatTime(secondsLeft)}
+      </p>
+      <p role="status" className="timer-done">
+        {status === 'done' ? 'Готово! Час пити каву.' : ''}
+      </p>
+      <div className="timer-controls">
+        {status === 'idle' && (
+          <button type="button" onClick={onStart}>
+            Старт
+          </button>
+        )}
+        {status === 'running' && (
+          <>
+            <button type="button" onClick={onPause}>
+              Пауза
+            </button>
+            <button type="button" onClick={onReset}>
+              Скинути
+            </button>
+          </>
+        )}
+        {status === 'paused' && (
+          <>
+            <button type="button" onClick={onStart}>
+              Продовжити
+            </button>
+            <button type="button" onClick={onReset}>
+              Скинути
+            </button>
+          </>
+        )}
+        {status === 'done' && (
+          <button type="button" onClick={onReset}>
+            Спочатку
+          </button>
+        )}
+      </div>
+    </article>
+  )
 }
