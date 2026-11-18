@@ -24,6 +24,22 @@ export default function TimerView({
   onPause,
   onReset,
 }) {
+  let primaryLabel = 'Старт'
+  let primaryAction = onStart
+
+  if (status === 'running') {
+    primaryLabel = 'Пауза'
+    primaryAction = onPause
+  } else if (status === 'paused') {
+    primaryLabel = 'Продовжити'
+    primaryAction = onStart
+  } else if (status === 'done') {
+    primaryLabel = 'Спочатку'
+    primaryAction = onReset
+  }
+
+  const showReset = status === 'running' || status === 'paused'
+
   return (
     <article className="brew-timer" aria-labelledby={`${method.id}-title`}>
       <h3 id={`${method.id}-title`}>{method.name}</h3>
@@ -35,34 +51,12 @@ export default function TimerView({
         {status === 'done' ? 'Готово! Час пити каву.' : ''}
       </p>
       <div className="timer-controls">
-        {status === 'idle' && (
-          <button type="button" onClick={onStart}>
-            Старт
-          </button>
-        )}
-        {status === 'running' && (
-          <>
-            <button type="button" onClick={onPause}>
-              Пауза
-            </button>
-            <button type="button" onClick={onReset}>
-              Скинути
-            </button>
-          </>
-        )}
-        {status === 'paused' && (
-          <>
-            <button type="button" onClick={onStart}>
-              Продовжити
-            </button>
-            <button type="button" onClick={onReset}>
-              Скинути
-            </button>
-          </>
-        )}
-        {status === 'done' && (
+        <button type="button" onClick={primaryAction}>
+          {primaryLabel}
+        </button>
+        {showReset && (
           <button type="button" onClick={onReset}>
-            Спочатку
+            Скинути
           </button>
         )}
       </div>
