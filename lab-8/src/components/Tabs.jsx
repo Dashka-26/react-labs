@@ -16,7 +16,7 @@
  *
  * Вимоги — у тестах tests/Tabs.children.test.jsx і tests/Tabs.a11y.test.jsx.
  */
-import { createContext, use, useState } from 'react'
+import { createContext, use, useId, useState } from 'react'
 
 const TabsContext = createContext(null)
 
@@ -30,9 +30,10 @@ function useTabsContext(componentName) {
 
 export default function Tabs({ defaultValue, children }) {
   const [activeTab, setActiveTab] = useState(defaultValue)
+  const baseId = useId()
 
   return (
-    <TabsContext value={{ activeTab, setActiveTab }}>
+    <TabsContext value={{ activeTab, setActiveTab, baseId }}>
       <div className="tabs">{children}</div>
     </TabsContext>
   )
@@ -40,21 +41,54 @@ export default function Tabs({ defaultValue, children }) {
 
 function TabList({ children, ...props }) {
   return (
-    <div className="tab-list" {...props}>
+    <div role="tablist" className="tab-list" {...props}>
       {children}
     </div>
   )
 }
 
 function Tab({ value, children }) {
-  const { activeTab, setActiveTab } = useTabsContext('Tabs.Tab')
+  const { activeTab, setActiveTab, baseId } = useTabsContext('Tabs.Tab')
   const isSelected = activeTab === value
+  const tabId = `${baseId}-tab-${value}`
+  const panelId = `${baseId}-panel-${value}`
+
+  function handleKeyDown(e) {
+    const list = e.currentTarget.closest('[role="tablist"]')
+    if (!list) return
+
+    const tabs = Array.from(list.querySelectorAll('[role="tab"]'))
+    const currentIndex = tabs.indexOf(e.currentTarget)
+    if (currentIndex === -1) return
+
+    let nextIndex = null
+    if (e.key === 'ArrowRight') {
+      nextIndex = (currentIndex + 1) % tabs.length
+    } else if (e.key === 'ArrowLeft') {
+      nextIndex = (currentIndex - 1 + tabs.length) % tabs.length
+    } else if (e.key === 'Home') {
+      nextIndex = 0
+    } else if (e.key === 'End') {
+      nextIndex = tabs.length - 1
+    }
+
+    if (nextIndex !== null) {
+      e.preventDefault()
+      tabs[nextIndex].focus()
+      tabs[nextIndex].click()
+    }
+  }
 
   return (
     <button
       type="button"
-      className={isSelected ? 'active' : undefined}
+      role="tab"
+      id={tabId}
+      aria-selected={isSelected}
+      aria-controls={panelId}
+      tabIndex={isSelected ? 0 : -1}
       onClick={() => setActiveTab(value)}
+      onKeyDown={handleKeyDown}
     >
       {children}
     </button>
@@ -62,10 +96,22 @@ function Tab({ value, children }) {
 }
 
 function TabPanel({ value, children }) {
-  const { activeTab } = useTabsContext('Tabs.Panel')
+  const { activeTab, baseId } = useTabsContext('Tabs.Panel')
   const isSelected = activeTab === value
+  const tabId = `${baseId}-tab-${value}`
+  const panelId = `${baseId}-panel-${value}`
 
-  return <div hidden={!isSelected}>{children}</div>
+  return (
+    <div
+      role="tabpanel"
+      id={panelId}
+      aria-labelledby={tabId}
+      tabIndex={0}
+      hidden={!isSelected}
+    >
+      {children}
+    </div>
+  )
 }
 
 Tabs.List = TabList
