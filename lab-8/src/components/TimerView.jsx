@@ -1,6 +1,8 @@
-import { withAnalytics } from '../hoc/withAnalytics.jsx'
 import { formatTime } from '../formatTime.js'
+import { withAnalytics } from '../hoc/withAnalytics.jsx'
 import Button from './Button.jsx'
+
+const PrimaryButton = withAnalytics(Button, 'timer_control')
 
 export default function TimerView({
   method,
@@ -13,6 +15,7 @@ export default function TimerView({
   let primaryLabel = 'Старт'
   let onPrimary = onStart
   let action = 'start'
+
   if (status === 'running') {
     primaryLabel = 'Пауза'
     onPrimary = onPause
@@ -25,7 +28,6 @@ export default function TimerView({
     onPrimary = onReset
     action = 'restart'
   }
-  const PrimaryButton = withAnalytics(Button, `timer_${action}:${method.id}`)
 
   return (
     <article className="brew-timer" aria-labelledby={`${method.id}-title`}>
@@ -38,7 +40,12 @@ export default function TimerView({
         {status === 'done' ? 'Готово! Час пити каву.' : ''}
       </p>
       <div className="timer-controls">
-        <PrimaryButton onClick={onPrimary}>{primaryLabel}</PrimaryButton>
+        <PrimaryButton
+          analyticsData={{ method: method.id, action }}
+          onClick={onPrimary}
+        >
+          {primaryLabel}
+        </PrimaryButton>
         {(status === 'running' || status === 'paused') && (
           <Button onClick={onReset}>Скинути</Button>
         )}
