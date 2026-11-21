@@ -1,7 +1,7 @@
-import { useShowMore } from './useShowMore.js'
-import BeanCard from '../../shared/BeanCard.jsx'
+import { useShowMore } from '../../../hooks/useShowMore.js'
+import BeanCard from './BeanCard.jsx'
 
-export default function RelatedProducts({ products }) {
+export default function RelatedProducts({ products, renderFavorite }) {
   const { visibleItems, hiddenCount, showMore, collapse } = useShowMore(
     products,
     4,
@@ -13,7 +13,11 @@ export default function RelatedProducts({ products }) {
       <ul className="related-list" aria-labelledby="related-title">
         {visibleItems.map((bean) => (
           <li key={bean.id}>
-            <BeanCard bean={bean} compact />
+            <BeanCard
+              bean={bean}
+              compact
+              favoriteButton={renderFavorite?.(bean)}
+            />
           </li>
         ))}
         <li className="related-more">
