@@ -141,7 +141,8 @@ export function queueReducer(state, action) {
 
     case 'order_cancelled': {
       if (!state.orders.byId[action.orderId]) return state
-      const { [action.orderId]: _, ...remainingOrders } = state.orders.byId
+      const remainingOrders = { ...state.orders.byId }
+      delete remainingOrders[action.orderId]
       return {
         ...state,
         orders: {
