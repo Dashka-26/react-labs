@@ -1,4 +1,5 @@
 import { useReducer, useState } from 'react'
+import HistoryButtons from './components/HistoryButtons.jsx'
 import OrderBoard from './components/OrderBoard.jsx'
 import OrderComposer from './components/OrderComposer.jsx'
 import OrderDetails from './components/OrderDetails.jsx'
@@ -8,13 +9,20 @@ import {
   queueReducer,
   selectOrder,
 } from './model/queueReducer.js'
+import { createHistory, withUndo } from './model/withUndo.js'
+
+const undoableQueueReducer = withUndo(queueReducer)
 
 export default function App() {
-  const [queue, dispatch] = useReducer(queueReducer, null, () =>
-    createInitialState(loadOrders()),
+  const [history, dispatch] = useReducer(undoableQueueReducer, null, () =>
+    createHistory(createInitialState(loadOrders())),
   )
   // ID замовлення, відкритого в «Деталях», або null.
   const [openedOrderId, setOpenedOrderId] = useState(null)
+
+  const queue = history.present
+  const canUndo = history.past.length > 0
+  const canRedo = history.future.length > 0
 
   function handlePlace({ customerName, items }) {
     dispatch({
@@ -41,6 +49,12 @@ export default function App() {
       <div className="workspace">
         <OrderComposer onPlace={handlePlace} />
         <main className="queue">
+          <HistoryButtons
+            canUndo={canUndo}
+            canRedo={canRedo}
+            onUndo={() => dispatch({ type: 'undo' })}
+            onRedo={() => dispatch({ type: 'redo' })}
+          />
           <OrderDetails
             order={openedOrder}
             dispatch={dispatch}
